@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "1yT6FsqyrDFcXYl9TloIQk3+CL/2QNOUkYJvsR5zTddfVdAhzZgEDuDyCxbp0S0r9wMm8Cc5Y2/1ai+4YiYl5g==",
+  "dgSpecHash": "CE6/d/VcVYKUjBqsDtG2hAJ6FFW/o1QgRjsMvYtaVgX+RcFvSIRa8B0VUni592O10eIgxed8HVBNUcEuSBl1oQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\davi_\\RiderProjects\\cyber-strike\\CyberStrike\\CyberStrike.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\davi_\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\davi_\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\davi_\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\davi_\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\7.0.12\\microsoft.aspnetcore.jsonpatch.7.0.12.nupkg.sha512",

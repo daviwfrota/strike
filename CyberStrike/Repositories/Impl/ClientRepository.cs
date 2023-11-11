@@ -1,36 +1,40 @@
 using CyberStrike.Models.DAO;
-using CyberStrike.Repository;
 
 namespace CyberStrike.Repositories.Impl;
 
-public class UserRepository : IUserRepository
+public class ClientRepository : IClientRepository
 {
     private readonly CyberContext _context;
-    public UserRepository(CyberContext ctx)
+    public ClientRepository(CyberContext ctx)
     {
         _context = ctx;
     }
 
-    public User Add(User user)
+    public Client? GetByEmail(string email)
+    {
+        return _context.Users.FirstOrDefault(user => user.Email == email);
+    }
+
+    public Client Add(Client user)
     {
         _context.Users.Add(user);
         _context.SaveChanges();
         return user;
     }
 
-    public User Update(User user)
+    public Client Update(Client user)
     {
         _context.Users.Update(user);
         _context.SaveChanges();
         return user;
     }
 
-    public List<User> GetUsers()
+    public List<Client> GetUsers()
     {
         return _context.Users.ToList();
     }
 
-    public User? GetById(Guid guid)
+    public Client? GetById(Guid guid)
     {
         return _context.Users.FirstOrDefault(u => u.Id == guid);
     }

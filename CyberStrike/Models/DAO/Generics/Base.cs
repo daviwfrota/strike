@@ -14,4 +14,9 @@ public class Base
     {
         Active = false;
     }
+    
+    public void Activate()
+    {
+        Active = true;
+    }
 }

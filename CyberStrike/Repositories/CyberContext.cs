@@ -2,21 +2,21 @@ using CyberStrike.Models.DAO;
 using CyberStrike.Models.DAO.Bases;
 using Microsoft.EntityFrameworkCore;
 
-namespace CyberStrike.Repository;
+namespace CyberStrike.Repositories;
 
 public class CyberContext : DbContext
 {
-    public DbSet<User> Users { get; set; }
-    public DbSet<Profile> Profiles { get; set; }
+    public DbSet<Client>? Users { get; set; }
+    
+    public CyberContext(DbContextOptions<CyberContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder
-            .Entity<User>()
-            .HasOne<Profile>();
-        modelBuilder
-            .Entity<Profile>()
-            .HasOne<User>();
+        modelBuilder.HasPostgresExtension("uuid-ossp");
+        modelBuilder.Entity<Client>()
+            .HasIndex(client => new { client.Email, client.UpdatedAt });
+        modelBuilder.Entity<Client>()
+            .HasAlternateKey(client => new { client.Email });
     }
 
     public override int SaveChanges()
