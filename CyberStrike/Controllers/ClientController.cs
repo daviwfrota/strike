@@ -1,4 +1,5 @@
 using System.Net.Mime;
+using CyberStrike.Errors;
 using CyberStrike.Models.DTO;
 using CyberStrike.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -30,9 +31,9 @@ public class ClientController : ControllerBase
         {
             return StatusCode(StatusCodes.Status201Created, _clientService.Save(client));
         }
-        catch (Exception e)
+        catch (BadRequestException e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(e);
         }
     }
 }
