@@ -1,21 +1,29 @@
-using System.Net;
+using System.Security.Claims;
 using AutoMapper;
+using CyberStrike.Constants;
 using CyberStrike.Errors;
 using CyberStrike.Models.DAO;
-using CyberStrike.Models.DTO;
+using CyberStrike.Models.DTO.Clients;
+using CyberStrike.Models.DTO.Login;
 using CyberStrike.Repositories;
+using CyberStrike.Utils;
+using Microsoft.Extensions.Options;
 
 namespace CyberStrike.Services.Impl;
 
 public class ClientService : IClientService
 {
-    private IClientRepository _clientRepository;
-    private IMapper _mapper;
+    private readonly IClientRepository _clientRepository;
+    private readonly IClientLocationRepository _clientLocationRepository;
+    private readonly IMapper _mapper;
+    private readonly Security _security;
     
-    public ClientService(IMapper mapper, IClientRepository clientRepository)
+    public ClientService(IMapper mapper, IOptions<Security> securityOptions, IClientRepository clientRepository, IClientLocationRepository clientLocationRepository)
     {
         _clientRepository = clientRepository;
+        _clientLocationRepository = clientLocationRepository;
         _mapper = mapper;
+        _security = securityOptions.Value;
     }
     public ClientDto Save(ClientDto client)
     {
@@ -58,4 +66,29 @@ public class ClientService : IClientService
         throw new NotImplementedException();
     }
 
+    public Response Login(Request request)
+    {
+
+        try
+        {
+            var client = _clientRepository.GetByEmail(request.Email);
+            if (client == null || !client.VerifyPassword(request.Password))
+                throw new BadRequestException("Email e/ou senha inválido(as).");
+
+            var claims = new List<Claim> { new Claim(ClaimTypes.Email, client.Email)  };
+            var jwt = new GenerateJwt(_security.ExpireIn, _security.Secret, claims);
+        
+            client.UpdateLastCommunication();
+            _clientRepository.Update(client);
+            _clientLocationRepository.SaveAsync(new ClientLocation(request.Latitude, request.Logintude, client));
+
+            return new Response(jwt.Jwt, "Bearer");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new InternalServerException(e.Message);
+        }
+
+    }
 }

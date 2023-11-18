@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using CyberStrike.Errors;
-using CyberStrike.Models.DTO;
+using CyberStrike.Models.DTO.Clients;
+using CyberStrike.Models.DTO.Login;
 using CyberStrike.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,7 @@ namespace CyberStrike.Controllers;
 [ApiController]
 public class ClientController : ControllerBase
 {
-    private IClientService _clientService;
+    private readonly IClientService _clientService;
 
     public ClientController(IClientService clientService)
     {
@@ -30,6 +31,23 @@ public class ClientController : ControllerBase
         try
         {
             return StatusCode(StatusCodes.Status201Created, _clientService.Save(client));
+        }
+        catch (BadRequestException e)
+        {
+            return BadRequest(e);
+        }
+    }
+    
+    
+    [HttpPost("login")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    // [Authorize(policy: Roles.ADMIN)]
+    public ActionResult<Response> Login(Request request)
+    {
+        try
+        {
+            return StatusCode(StatusCodes.Status200OK, _clientService.Login(request));
         }
         catch (BadRequestException e)
         {

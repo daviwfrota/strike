@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CyberStrike.Models.DAO.Bases;
+namespace CyberStrike.Models.DAO.Generics;
 
 public class Base
 {

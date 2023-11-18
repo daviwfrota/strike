@@ -1,4 +1,5 @@
 using AutoMapper;
+using CyberStrike.Constants;
 using CyberStrike.Repositories;
 using CyberStrike.Repositories.Impl;
 using CyberStrike.Services;
@@ -9,6 +10,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+/*
+ * Configurations Section
+ */
+builder.Services.Configure<Security>(builder.Configuration.GetRequiredSection("Security"));
 
 builder.Services
     .AddControllers()
@@ -24,13 +29,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
+builder.Services.AddScoped<IClientLocationRepository, ClientLocationRepository>();
 builder.Services.AddDbContext<CyberContext>((options) =>
 {
-    options.UseNpgsql(builder.Configuration["DbContext:ConnectionString"]);
+    options.UseNpgsql(builder.Configuration["DbContext:ConnectionString"], options => options.UseNetTopologySuite());
 });
+
+
 
 var mappingConfig = new MapperConfiguration(mc => { mc.AddProfile(new MappingProfile()); });
 builder.Services.AddSingleton(mappingConfig.CreateMapper());
+
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(builder.Configuration["Security:Type"] ?? "Bearer").AddJwtBearer();
 
 var app = builder.Build();
 
@@ -45,6 +56,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 using var scope = ((IApplicationBuilder)app).ApplicationServices.CreateScope();
 try

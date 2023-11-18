@@ -1,13 +1,14 @@
 using CyberStrike.Models.DAO;
-using CyberStrike.Models.DAO.Bases;
+using CyberStrike.Models.DAO.Generics;
 using Microsoft.EntityFrameworkCore;
 
 namespace CyberStrike.Repositories;
 
 public class CyberContext : DbContext
 {
-    public DbSet<Client>? Users { get; set; }
-    
+    public DbSet<Client> Clients { get; set; }
+    public DbSet<ClientLocation> ClientLocations { get; set; }
+
     public CyberContext(DbContextOptions<CyberContext> options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -17,6 +18,14 @@ public class CyberContext : DbContext
             .HasIndex(client => new { client.Email, client.UpdatedAt });
         modelBuilder.Entity<Client>()
             .HasAlternateKey(client => new { client.Email });
+
+        modelBuilder
+            .Entity<Client>()
+            .HasMany<ClientLocation>(cl => cl.ClientLocations);
+        
+        modelBuilder
+            .Entity<ClientLocation>()
+            .HasOne<Client>(cl => cl.Client);
     }
 
     public override int SaveChanges()

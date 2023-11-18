@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using CyberStrike.Models.DAO.Bases;
+using CyberStrike.Models.DAO.Generics;
 using BC = BCrypt.Net.BCrypt;
 
 namespace CyberStrike.Models.DAO;
@@ -8,6 +8,8 @@ public class Client : Base
 {
     public string Email { get; set; }
     public string Password { get; set; }
+    public DateTime LastCommunication { get; set; }
+    public List<ClientLocation> ClientLocations { get; set; } = new List<ClientLocation>();
 
     public Client(string email, string password)
     {
@@ -23,5 +25,10 @@ public class Client : Base
     public bool VerifyPassword(string password)
     {
         return BC.Verify(password, Password);
+    }
+
+    public void UpdateLastCommunication()
+    {
+        LastCommunication = DateTime.Now;
     }
 }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace CyberStrike.Models.DTO;
+namespace CyberStrike.Models.DTO.Clients;
 
 public class ClientDto
 {
