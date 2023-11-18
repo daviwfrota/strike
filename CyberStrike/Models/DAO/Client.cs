@@ -10,6 +10,7 @@ public class Client : Base
     public string Password { get; set; }
     public DateTime LastCommunication { get; set; }
     public List<ClientLocation> ClientLocations { get; set; } = new List<ClientLocation>();
+    public List<ClientToken> ClientTokens { get; set; } = new List<ClientToken>();
 
     public Client(string email, string password)
     {

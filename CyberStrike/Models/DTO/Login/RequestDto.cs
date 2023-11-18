@@ -11,4 +11,6 @@ public class Request
     public string Password { get; set; }
     public float Latitude { get; set; }
     public float Logintude { get; set; }
+    
+    public bool KeepAlive { get; set; }
 }

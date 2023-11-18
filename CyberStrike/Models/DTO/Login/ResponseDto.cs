@@ -18,4 +18,9 @@ public class Response
         AccessToken = accessToken;
         Type = type;
     }
+
+    public void AddRefresh(string refresh)
+    {
+        RefreshToken = refresh;
+    }
 }

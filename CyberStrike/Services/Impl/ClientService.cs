@@ -5,6 +5,7 @@ using CyberStrike.Errors;
 using CyberStrike.Models.DAO;
 using CyberStrike.Models.DTO.Clients;
 using CyberStrike.Models.DTO.Login;
+using CyberStrike.Models.Enums;
 using CyberStrike.Repositories;
 using CyberStrike.Utils;
 using Microsoft.Extensions.Options;
@@ -15,15 +16,21 @@ public class ClientService : IClientService
 {
     private readonly IClientRepository _clientRepository;
     private readonly IClientLocationRepository _clientLocationRepository;
+    private readonly IClientTokenRepository _clientTokenRepository;
     private readonly IMapper _mapper;
     private readonly Security _security;
     
-    public ClientService(IMapper mapper, IOptions<Security> securityOptions, IClientRepository clientRepository, IClientLocationRepository clientLocationRepository)
+    public ClientService(IMapper mapper, IOptions<Security> securityOptions, 
+        IClientRepository clientRepository, 
+        IClientLocationRepository clientLocationRepository,
+        IClientTokenRepository clientTokenRepository)
     {
-        _clientRepository = clientRepository;
-        _clientLocationRepository = clientLocationRepository;
         _mapper = mapper;
         _security = securityOptions.Value;
+        
+        _clientRepository = clientRepository;
+        _clientLocationRepository = clientLocationRepository;
+        _clientTokenRepository = clientTokenRepository;
     }
     public ClientDto Save(ClientDto client)
     {
@@ -77,12 +84,21 @@ public class ClientService : IClientService
 
             var claims = new List<Claim> { new Claim(ClaimTypes.Email, client.Email)  };
             var jwt = new GenerateJwt(_security.ExpireIn, _security.Secret, claims);
-        
+            
+            var response = new Response(jwt.Jwt, "Bearer");
+       
+            if (request.KeepAlive)
+            {
+                var token = new GenerateJwt(_security.RefreshTokenExpireIn, _security.Secret, claims);
+                _clientTokenRepository.Save(new ClientToken(token.Jwt, TokenType.REFRESH, client));
+                response.AddRefresh(token.Jwt);
+            }
+            
             client.UpdateLastCommunication();
             _clientRepository.Update(client);
+            
             _clientLocationRepository.SaveAsync(new ClientLocation(request.Latitude, request.Logintude, client));
-
-            return new Response(jwt.Jwt, "Bearer");
+            return response;
         }
         catch (Exception e)
         {

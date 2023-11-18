@@ -30,6 +30,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IClientLocationRepository, ClientLocationRepository>();
+builder.Services.AddScoped<IClientTokenRepository, ClientTokenRepository>();
+
 builder.Services.AddDbContext<CyberContext>((options) =>
 {
     options.UseNpgsql(builder.Configuration["DbContext:ConnectionString"], options => options.UseNetTopologySuite());
