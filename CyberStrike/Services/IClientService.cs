@@ -11,4 +11,5 @@ public interface IClientService
     ClientDto GetByEmail(string email);
 
     Response Login(Request request);
+    Response RefreshToken(RefreshTokenDto refreshToken);
 }

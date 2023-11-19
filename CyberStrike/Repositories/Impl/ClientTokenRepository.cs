@@ -29,4 +29,9 @@ public class ClientTokenRepository : IClientTokenRepository
         _context.SaveChanges();
         return clientToken;
     }
+
+    public ClientToken GetByTokenAndUser(string token, string email)
+    {
+        return _context.ClientTokens.FirstOrDefault(ct => ct.Token == token && ct.Client.Email == email && !ct.Revoked);
+    }
 }

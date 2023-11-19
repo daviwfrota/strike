@@ -98,6 +98,31 @@ public class ClientService : IClientService
             _clientRepository.Update(client);
             
             _clientLocationRepository.SaveAsync(new ClientLocation(request.Latitude, request.Logintude, client));
+            
+            /*
+             * TODO
+             * send to rabbitmq queue queue client is connected
+             */
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new InternalServerException(e.Message);
+        }
+    }
+
+    public Response RefreshToken(RefreshTokenDto refreshToken)
+    {
+        try
+        {
+            var token = new DecodeJwt(refreshToken.Token);
+            var ct = _clientTokenRepository.GetByTokenAndUser(refreshToken.Token, token.Email);
+            if (ct == null)
+                throw new UnauthorizedException("Refresh token inválido.");
+            var claims = new List<Claim> { new Claim(ClaimTypes.Email, ct.Client.Email)  };
+            var jwt = new GenerateJwt(_security.ExpireIn, _security.Secret, claims);
+            var response = new Response(jwt.Jwt, "Bearer", refreshToken.Token);
             return response;
         }
         catch (Exception e)
