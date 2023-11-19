@@ -23,6 +23,9 @@ public class MappingProfile : Profile
             .ForMember(farm => farm.Location,
                 opt => opt.MapFrom((dto, r) => r.Location = new Point(dto.Longitude, dto.Latitude)));
 
+        CreateMap<ClientProfile, ClientProfileDto>();
+        CreateMap<ClientProfileDto, ClientProfile>();
+
 
     }
 }

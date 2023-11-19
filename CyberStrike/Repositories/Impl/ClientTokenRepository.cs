@@ -1,4 +1,5 @@
 using CyberStrike.Models.DAO;
+using Microsoft.EntityFrameworkCore;
 
 namespace CyberStrike.Repositories.Impl;
 
@@ -32,6 +33,9 @@ public class ClientTokenRepository : IClientTokenRepository
 
     public ClientToken GetByTokenAndUser(string token, string email)
     {
-        return _context.ClientTokens.FirstOrDefault(ct => ct.Token == token && ct.Client.Email == email && !ct.Revoked);
+        return _context
+            .ClientTokens
+            .Include(ct => ct.Client)
+            .FirstOrDefault(ct => ct.Token == token && ct.Client.Email == email && !ct.Revoked);
     }
 }

@@ -8,4 +8,6 @@ public class ClientDto
     public string Email { get; set; }
     [Required(ErrorMessage = "Campo passaword obrigatório!")]
     public string Password { get; set; }
+    
+    public ClientProfileDto Profile { get; set; }
 }

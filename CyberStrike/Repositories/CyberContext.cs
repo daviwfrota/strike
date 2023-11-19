@@ -9,6 +9,7 @@ public class CyberContext : DbContext
     public DbSet<Client> Clients { get; set; }
     public DbSet<ClientLocation> ClientLocations { get; set; }
     public DbSet<ClientToken> ClientTokens { get; set; }
+    public DbSet<ClientProfile> ClientProfiles { get; set; }
 
     public CyberContext(DbContextOptions<CyberContext> options) : base(options) {}
 
@@ -23,6 +24,18 @@ public class CyberContext : DbContext
         modelBuilder
             .Entity<Client>()
             .HasMany<ClientLocation>(cl => cl.ClientLocations);
+
+        modelBuilder
+            .Entity<ClientProfile>()
+            .HasOne<Client>(cl => cl.Client)
+            .WithOne(c => c.Profile)
+            .HasForeignKey<Client>(c => c.ProfileId);
+        
+        modelBuilder
+            .Entity<Client>()
+            .HasOne<ClientProfile>(cl => cl.Profile)
+            .WithOne(cp => cp.Client)
+            .HasForeignKey<ClientProfile>(c => c.ClientId);;
         
         modelBuilder
             .Entity<ClientLocation>()

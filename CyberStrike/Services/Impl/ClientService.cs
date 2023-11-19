@@ -117,9 +117,13 @@ public class ClientService : IClientService
         try
         {
             var token = new DecodeJwt(refreshToken.Token);
+            if(!token.isValid)
+                throw new UnauthorizedException("Refresh token inválido.");
+
             var ct = _clientTokenRepository.GetByTokenAndUser(refreshToken.Token, token.Email);
             if (ct == null)
                 throw new UnauthorizedException("Refresh token inválido.");
+
             var claims = new List<Claim> { new Claim(ClaimTypes.Email, ct.Client.Email)  };
             var jwt = new GenerateJwt(_security.ExpireIn, _security.Secret, claims);
             var response = new Response(jwt.Jwt, "Bearer", refreshToken.Token);
