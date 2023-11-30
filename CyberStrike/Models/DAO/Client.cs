@@ -9,6 +9,7 @@ public class Client : Base
     public string Email { get; set; }
     public string Password { get; set; }
     public DateTime LastCommunication { get; set; }
+    public bool IsVerified { get; set; } = false;
     public ClientProfile Profile { get; set; } = new ClientProfile();
     public Guid ProfileId { get; set; }
     public List<ClientLocation> ClientLocations { get; set; } = new List<ClientLocation>();

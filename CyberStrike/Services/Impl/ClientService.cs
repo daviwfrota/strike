@@ -49,6 +49,12 @@ public class ClientService : IClientService
             var userToSave = _mapper.Map<Client>(client);
             userToSave.Hash();
             _clientRepository.Add(userToSave);
+            
+            /*
+             * TODO
+             * send to rabbitmq queue client email with verification code
+             */
+            
             return _mapper.Map<ClientDto>(userToSave);
         }
         catch (Exception e)
@@ -103,6 +109,7 @@ public class ClientService : IClientService
              * TODO
              * send to rabbitmq queue queue client is connected
              */
+            
             return response;
         }
         catch (Exception e)
