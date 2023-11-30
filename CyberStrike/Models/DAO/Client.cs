@@ -35,4 +35,9 @@ public class Client : Base
     {
         LastCommunication = DateTime.Now;
     }
+
+    public void Verify()
+    {
+        IsVerified = true;
+    }
 }

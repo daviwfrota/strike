@@ -87,6 +87,8 @@ public class ClientService : IClientService
             var client = _clientRepository.GetByEmail(request.Email);
             if (client == null || !client.VerifyPassword(request.Password))
                 throw new BadRequestException("Email e/ou senha inválido(as).");
+            if (!client.IsVerified)
+                throw new UnauthorizedException("Essa conta ainda não foi verificada.");
 
             var claims = new List<Claim> { new Claim(ClaimTypes.Email, client.Email)  };
             var jwt = new GenerateJwt(_security.ExpireIn, _security.Secret, claims);
@@ -141,6 +143,34 @@ public class ClientService : IClientService
             Console.WriteLine(e);
             throw new InternalServerException(e.Message);
         }
+    }
 
+    public Response ActiveAccount(string token)
+    {
+        try
+        {
+            var tokenDecoded = new DecodeJwt(token);
+            if(!tokenDecoded.isValid)
+                throw new UnauthorizedException("Esse token é inválido");
+            var ct = _clientTokenRepository.GetByTokenAndUser(token, tokenDecoded.Email);
+            if(ct == null)
+                throw new UnauthorizedException("Esse token é inválido");
+        
+            var client = _clientRepository.GetByEmail(tokenDecoded.Email);
+            if (client == null)
+                throw new BadRequestException("Cliente não existe.");
+            client.Verify();
+            _clientRepository.Update(client);
+            
+            var claims = new List<Claim> { new Claim(ClaimTypes.Email, ct.Client.Email)  };
+            var jwt = new GenerateJwt(_security.ExpireIn, _security.Secret, claims);
+            var response = new Response(jwt.Jwt, "Bearer");
+            return response;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw new InternalServerException(e.Message);
+        }
     }
 }

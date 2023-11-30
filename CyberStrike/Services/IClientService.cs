@@ -12,4 +12,5 @@ public interface IClientService
 
     Response Login(Request request);
     Response RefreshToken(RefreshTokenDto refreshToken);
+    Response ActiveAccount(string token);
 }
