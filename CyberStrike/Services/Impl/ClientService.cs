@@ -50,6 +50,10 @@ public class ClientService : IClientService
             userToSave.Hash();
             _clientRepository.Add(userToSave);
             
+            var claims = new List<Claim> { new Claim(ClaimTypes.Email, client.Email)  };
+            var jwt = new GenerateJwt(_security.ExpireIn, _security.Secret, claims);
+            _clientTokenRepository.Save(new ClientToken(jwt.Jwt, TokenType.ACTIVATE_ACCOUNT, userToSave));
+            
             /*
              * TODO
              * send to rabbitmq queue client email with verification code
